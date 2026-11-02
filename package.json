@@ -1,0 +1,18 @@
+{
+  "name": "matheus-farias-portfolio",
+  "version": "2.6.4",
+  "description": "Matheus Farias — Software Engineer & Creative Developer | Uncommon, Direct, High-Impact Portfolio",
+  "main": "index.html",
+  "scripts": {
+    "start": "node serve.js"
+  },
+  "keywords": [
+    "portfolio",
+    "software-engineer",
+    "creative-developer",
+    "interactive-terminal",
+    "web-audio"
+  ],
+  "author": "Matheus Carvalho Farias <matheusfarias.98@hotmail.com>",
+  "license": "MIT"
+}

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matheus Farias — Software Engineer & Creative Developer</title>
+  <meta name="description" content="Portfolio de Matheus Farias. Software engineer focado em performance, design refinado e produtos digitais de alto impacto.">
+  <meta name="keywords" content="Matheus Farias, Matheus Carvalho Farias, Software Engineer, Creative Developer, Full-Stack, Brasilia, Web Developer">
+  <meta name="author" content="Matheus Carvalho Farias">
+
+  <!-- OpenGraph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/matheuscarvalhofarias/portfolio">
+  <meta property="og:title" content="Matheus Farias — Software Engineer & Creative Developer">
+  <meta property="og:description" content="Engenharia de software implacável, design refinado e foco absoluto em execução.">
+
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN for instant utility rendering -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#08090d] text-[#e2e8f0] font-sans antialiased selection:bg-[#38bdf8] selection:text-black">
+
+  <!-- Ambient Interactive Canvas -->
+  <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Command Palette Modal (Cmd+K) -->
+  <div id="cmd-palette-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-200 flex items-start justify-center pt-24 px-4">
+    <div id="cmd-palette" class="bg-[#0f121d] border border-[#2d3748] w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200">
+      <div class="flex items-center px-4 py-3 border-b border-[#222938]">
+        <span class="text-[#38bdf8] mr-3 font-mono font-bold text-sm">❯</span>
+        <input id="cmd-input" type="text" placeholder="Digite um comando ou navegue... (Ex: projetos, whatsapp, terminal)" class="w-full bg-transparent text-white font-mono text-sm focus:outline-none placeholder-gray-500">
+        <kbd class="text-xs bg-[#1a2030] text-gray-400 px-2 py-0.5 rounded font-mono border border-gray-700">ESC</kbd>
+      </div>
+      <div id="cmd-results" class="max-h-72 overflow-y-auto p-2 space-y-1 font-mono text-xs">
+        <!-- populated dynamically -->
+      </div>
+      <div class="px-4 py-2 bg-[#090b12] border-t border-[#1a2030] flex items-center justify-between text-[11px] text-gray-500 font-mono">
+        <span>Navegar: <kbd class="text-gray-400">↑↓</kbd> Selecionar: <kbd class="text-gray-400">ENTER</kbd></span>
+        <span>MF // COMMAND PALETTE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Wrap -->
+  <div class="relative z-10 flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#08090d]/80 border-b border-[#181d2a] transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        
+        <!-- Brand / Identity -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0284c7] to-[#38bdf8] flex items-center justify-center font-mono font-black text-black text-base shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            MF
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-white tracking-wider text-sm font-mono flex items-center gap-2">
+              MATHEUS FARIAS
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Disponível para projetos"></span>
+            </span>
+            <span class="text-[10px] text-gray-400 font-mono uppercase tracking-widest">KERNEL // v2.6.4</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-7 text-xs font-mono font-medium text-gray-300">
+          <a href="#sobre" class="hover:text-[#38bdf8] transition-colors flex items-center gap-1.5"><span class="text-cyan-500">01.</span> <span data-i18n="nav.about">Sobre</span></a>
+          <a href="#projetos" class="hover:text-[#38bdf8] transition-colors flex items-center gap-1.5"><span class="text-cyan-500">02.</span> <span data-i18n="nav.projects">Projetos</span></a>
+          <a href="#manifesto" class="hover:text-[#38bdf8] transition-colors flex items-center gap-1.5"><span class="text-cyan-500">03.</span> <span data-i18n="nav.manifesto">Manifesto</span></a>
+          <a href="#terminal" class="hover:text-[#38bdf8] transition-colors flex items-center gap-1.5"><span class="text-cyan-500">04.</span> <span data-i18n="nav.terminal">Terminal</span></a>
+          <a href="#contato" class="hover:text-[#38bdf8] transition-colors flex items-center gap-1.5"><span class="text-cyan-500">05.</span> <span data-i18n="nav.contact">Contato</span></a>
+        </nav>
+
+        <!-- Functional Utility Controls -->
+        <div class="flex items-center gap-2">
+          <!-- Command Palette Trigger Pill -->
+          <button id="open-palette-btn" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#121624] border border-[#232a3d] hover:border-cyan-500/50 text-gray-400 hover:text-white text-xs font-mono transition-all">
+            <span class="text-cyan-400">⌘K</span>
+            <span class="text-[11px] text-gray-400" data-i18n="nav.cmd">Comandos</span>
+          </button>
+
+          <!-- Audio FX Toggle -->
+          <button id="audio-toggle-btn" class="p-2 rounded-lg bg-[#121624] border border-[#232a3d] text-gray-400 hover:text-cyan-400 transition-colors" title="Alternar Efeitos Sonoros">
+            <svg id="audio-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+            <svg id="audio-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+          </button>
+
+          <!-- Language Switcher -->
+          <button id="lang-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-[#121624] border border-[#232a3d] text-xs font-mono font-bold text-gray-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-colors">
+            <span id="lang-indicator">PT</span>
+          </button>
+
+          <!-- Mobile Hamburger -->
+          <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg bg-[#121624] border border-[#232a3d] text-gray-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 bg-[#0c0e17] border-b border-[#1e2436] space-y-2 font-mono text-sm">
+        <a href="#sobre" class="block py-2 text-gray-300 hover:text-cyan-400">01. Sobre</a>
+        <a href="#projetos" class="block py-2 text-gray-300 hover:text-cyan-400">02. Projetos</a>
+        <a href="#manifesto" class="block py-2 text-gray-300 hover:text-cyan-400">03. Manifesto</a>
+        <a href="#terminal" class="block py-2 text-gray-300 hover:text-cyan-400">04. Terminal</a>
+        <a href="#contato" class="block py-2 text-gray-300 hover:text-cyan-400">05. Contato</a>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow">
+
+      <!-- ========================================================================= -->
+      <!-- 01. HERO SECTION: DIRECT, VISCERAL, UNFORGETTABLE -->
+      <!-- ========================================================================= -->
+      <section id="sobre" class="relative pt-16 pb-24 md:pt-28 md:pb-36 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <!-- Status pill -->
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#121829] border border-[#24304f] mb-8 text-xs font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+            <span class="text-gray-300 font-medium" data-i18n="hero.status">ENGENHARIA EM TEMPO REAL • BRASÍLIA, DF</span>
+            <span class="text-gray-600">|</span>
+            <span class="text-cyan-400">OPEN TO WORK</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Left Headline & Narrative -->
+            <div class="lg:col-span-8 space-y-6">
+              <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.08] font-mono">
+                CONSTRUO SOFTWARE <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400">QUE REALMENTE FUNCIONA</span>
+                <span class="text-cyan-400 animate-blink">_</span>
+              </h1>
+
+              <p class="text-lg sm:text-xl text-gray-400 max-w-2xl font-sans leading-relaxed" data-i18n="hero.desc">
+                Engenharia de software implacável, design interativo de alta precisão e arquiteturas prontas para escala. Sem jargões corporativos vazios, sem código descartável. Apenas execução direta que move a agulha do seu produto.
+              </p>
+
+              <!-- Action buttons -->
+              <div class="pt-4 flex flex-wrap items-center gap-4">
+                <a href="https://wa.me/5561999233249?text=Ol%C3%A1%20Matheus!%20Vi%20seu%20portfolio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold font-mono text-sm shadow-lg shadow-cyan-500/25 flex items-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 transition-all btn-sound">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.7c.974.551 1.764.847 2.791.848 3.185 0 5.769-2.587 5.77-5.766.001-3.182-2.585-5.769-5.77-5.769zm10.218 5.766c-.001 5.647-4.595 10.239-10.247 10.239-1.803 0-3.483-.473-4.945-1.294l-5.057 1.327 1.353-4.933c-.901-1.517-1.424-3.28-1.425-5.339.001-5.647 4.596-10.24 10.25-10.24 5.653 0 10.247 4.593 10.247 10.24z"/></svg>
+                  <span data-i18n="hero.cta_wa">Falar no WhatsApp Direto</span>
+                </a>
+
+                <a href="#terminal" class="px-6 py-3.5 rounded-xl bg-[#121624] hover:bg-[#1a2034] text-gray-200 border border-[#232a3d] hover:border-cyan-500/50 font-mono text-sm font-semibold flex items-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 transition-all btn-sound">
+                  <span class="text-cyan-400">❯_</span>
+                  <span data-i18n="hero.cta_term">Abrir Terminal Interativo</span>
+                </a>
+
+                <a href="#projetos" class="px-5 py-3.5 rounded-xl text-gray-400 hover:text-white font-mono text-sm font-medium hover:underline flex items-center gap-1.5 transition-all">
+                  <span data-i18n="hero.cta_proj">Ver Projetos</span>
+                  <span>↓</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Right Telemetry & Live Vitals Widget -->
+            <div class="lg:col-span-4">
+              <div class="p-6 rounded-2xl bg-[#0e121e]/90 border border-[#20273a] shadow-2xl relative overflow-hidden backdrop-blur-md">
+                <div class="absolute -top-12 -right-12 w-36 h-36 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between pb-4 border-b border-[#1b2234]">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                    <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                  </div>
+                  <span class="text-[11px] font-mono text-gray-400">LIVE TELEMETRY</span>
+                </div>
+
+                <div class="pt-5 space-y-4 font-mono text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-400" data-i18n="tele.status">Status Operacional</span>
+                    <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 100% ONLINE
+                    </span>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-400" data-i18n="tele.location">Localização</span>
+                    <span class="text-gray-200">Brasília, DF (UTC-3)</span>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-400" data-i18n="tele.stack">Stack Principal</span>
+                    <span class="text-cyan-400 font-semibold">TS / Node / Modern Web</span>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-400" data-i18n="tele.fps">Client FPS</span>
+                    <span id="live-fps" class="text-yellow-400 font-bold">60.0 FPS</span>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-400" data-i18n="tele.latency">Tempo Resposta</span>
+                    <span class="text-gray-200 font-bold">&lt; 24h</span>
+                  </div>
+
+                  <div class="pt-3 border-t border-[#1b2234]">
+                    <div class="text-[11px] text-gray-500 mb-2" data-i18n="tele.quote">DIRETIVA DE ENGENHARIA:</div>
+                    <p class="text-gray-300 italic text-[11px] leading-relaxed">
+                      "Menos código inútil, mais impacto prático. Se uma linha de código não resolve uma dor real, ela não deve existir."
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom KPI Bar -->
+          <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 p-6 rounded-2xl bg-[#0b0e17] border border-[#1a2133]">
+            <div class="space-y-1">
+              <span class="text-3xl font-extrabold text-white font-mono">100%</span>
+              <p class="text-xs text-gray-400 font-mono uppercase" data-i18n="kpi.1">Foco em Entrega &amp; Produção</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-3xl font-extrabold text-cyan-400 font-mono">0ms</span>
+              <p class="text-xs text-gray-400 font-mono uppercase" data-i18n="kpi.2">Paciência com Interfaces Lentas</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-3xl font-extrabold text-indigo-400 font-mono">Full-Stack</span>
+              <p class="text-xs text-gray-400 font-mono uppercase" data-i18n="kpi.3">Arquitetura de Ponta a Ponta</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-3xl font-extrabold text-emerald-400 font-mono">&lt; 1s</span>
+              <p class="text-xs text-gray-400 font-mono uppercase" data-i18n="kpi.4">Tempo de Carregamento Web</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- 02. FEATURED PROJECTS: REAL, MEASURABLE, VERIFIABLE -->
+      <!-- ========================================================================= -->
+      <section id="projetos" class="py-24 border-t border-[#151a27] relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <div class="text-xs font-mono text-cyan-400 tracking-widest uppercase mb-2">02 // CASOS REAIS</div>
+              <h2 class="text-3xl sm:text-5xl font-extrabold text-white font-mono tracking-tight" data-i18n="proj.title">
+                PROJETOS &amp; ENTREGAS
+              </h2>
+            </div>
+            <p class="text-sm text-gray-400 font-mono max-w-md" data-i18n="proj.subtitle">
+              Sistemas desenhados para resolver problemas reais de conversão, experiência de usuário e integridade de dados.
+            </p>
+          </div>
+
+          <!-- Project Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Project 1: UPAVET Landing Page -->
+            <div class="group relative rounded-2xl bg-[#0e121e] border border-[#20273a] hover:border-cyan-500/60 transition-all duration-300 flex flex-col overflow-hidden shadow-xl hover:-translate-y-1">
+              <div class="h-48 bg-gradient-to-br from-[#0c1626] to-[#122b3d] p-6 relative flex flex-col justify-between overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-cyan-500/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center justify-between relative z-10">
+                  <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">PRODUCTION LIVE</span>
+                  <span class="text-gray-400 font-mono text-xs">2026</span>
+                </div>
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold text-white font-mono group-hover:text-cyan-400 transition-colors">UPAVET</h3>
+                  <p class="text-xs text-cyan-300 font-mono">Veterinária &amp; Pet Shop Platform</p>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="proj.upavet.desc">
+                  Landing page de alta conversão para clínica e pet shop com slider interativo antes/depois de tosa com arrasto preciso, modal inteligente de agendamento por serviço e direcionamento customizado para o WhatsApp.
+                </p>
+
+                <div class="space-y-3 pt-2 border-t border-[#1a2233]">
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">ES6+ Modules</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Tailwind CSS</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Interactive Slider</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">WhatsApp API</span>
+                  </div>
+
+                  <div class="pt-3 flex items-center justify-between">
+                    <a href="https://github.com/matheuscarvalhofarias/upavet" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 btn-sound">
+                      <span>Ver Repositório</span>
+                      <span>↗</span>
+                    </a>
+                    <span class="text-[11px] font-mono text-gray-500">100% Sincronizado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 2: Arca Forte -->
+            <div class="group relative rounded-2xl bg-[#0e121e] border border-[#20273a] hover:border-indigo-500/60 transition-all duration-300 flex flex-col overflow-hidden shadow-xl hover:-translate-y-1">
+              <div class="h-48 bg-gradient-to-br from-[#12132b] to-[#1f1d47] p-6 relative flex flex-col justify-between overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center justify-between relative z-10">
+                  <span class="px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">WEB PLATFORM</span>
+                  <span class="text-gray-400 font-mono text-xs">2026</span>
+                </div>
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold text-white font-mono group-hover:text-indigo-400 transition-colors">ARCA FORTE</h3>
+                  <p class="text-xs text-indigo-300 font-mono">Ecosystem &amp; Pet Care Portal</p>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="proj.arca.desc">
+                  Arquitetura web robusta desenhada para apresentação de infraestrutura hospitalar veterinária, corpo clínico e canais de emergência 24h com performance de carregamento sub-segundo.
+                </p>
+
+                <div class="space-y-3 pt-2 border-t border-[#1a2233]">
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Design System</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Responsive UX</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">SEO Optimization</span>
+                  </div>
+
+                  <div class="pt-3 flex items-center justify-between">
+                    <a href="https://github.com/matheuscarvalhofarias/arca-forte" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 btn-sound">
+                      <span>Ver Repositório</span>
+                      <span>↗</span>
+                    </a>
+                    <span class="text-[11px] font-mono text-gray-500">GitHub Verified</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 3: Persona 3 Experience -->
+            <div class="group relative rounded-2xl bg-[#0e121e] border border-[#20273a] hover:border-sky-500/60 transition-all duration-300 flex flex-col overflow-hidden shadow-xl hover:-translate-y-1">
+              <div class="h-48 bg-gradient-to-br from-[#071927] to-[#0c314f] p-6 relative flex flex-col justify-between overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-sky-500/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center justify-between relative z-10">
+                  <span class="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">CREATIVE EXPERIENCE</span>
+                  <span class="text-gray-400 font-mono text-xs">2026</span>
+                </div>
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold text-white font-mono group-hover:text-sky-400 transition-colors">PERSONA 3 UI</h3>
+                  <p class="text-xs text-sky-300 font-mono">Stylized Neo-Noir Web Interface</p>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="proj.persona.desc">
+                  Exploração de design cinemático e motion na web inspirado pela icônica estética de Persona 3: tipografia angular em alto contraste, transições de estado ousadas e áudio interativo.
+                </p>
+
+                <div class="space-y-3 pt-2 border-t border-[#1a2233]">
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Canvas FX</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Micro-Interactions</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Web Audio API</span>
+                  </div>
+
+                  <div class="pt-3 flex items-center justify-between">
+                    <a href="https://github.com/matheuscarvalhofarias/persona3-website" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1.5 btn-sound">
+                      <span>Ver Repositório</span>
+                      <span>↗</span>
+                    </a>
+                    <span class="text-[11px] font-mono text-gray-500">Creative Lab</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 4: Levitate -->
+            <div class="group relative rounded-2xl bg-[#0e121e] border border-[#20273a] hover:border-emerald-500/60 transition-all duration-300 flex flex-col overflow-hidden shadow-xl hover:-translate-y-1">
+              <div class="h-48 bg-gradient-to-br from-[#0a2318] to-[#123e2b] p-6 relative flex flex-col justify-between overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center justify-between relative z-10">
+                  <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">CORE ENGINE</span>
+                  <span class="text-gray-400 font-mono text-xs">2026</span>
+                </div>
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold text-white font-mono group-hover:text-emerald-400 transition-colors">LEVITATE</h3>
+                  <p class="text-xs text-emerald-300 font-mono">Physics &amp; Smooth Movement Engine</p>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="proj.levitate.desc">
+                  Mecanismo leve para cálculos de inércia, scroll cinético e movimentação espacial suave para elementos web interativos com custo computacional mínimo.
+                </p>
+
+                <div class="space-y-3 pt-2 border-t border-[#1a2233]">
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Performance 60FPS</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Math Physics</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Zero Bloat</span>
+                  </div>
+
+                  <div class="pt-3 flex items-center justify-between">
+                    <a href="https://github.com/matheuscarvalhofarias/levitate" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 btn-sound">
+                      <span>Ver Repositório</span>
+                      <span>↗</span>
+                    </a>
+                    <span class="text-[11px] font-mono text-gray-500">Public Repo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 5: Obsidian Productivity Extensions -->
+            <div class="group relative rounded-2xl bg-[#0e121e] border border-[#20273a] hover:border-purple-500/60 transition-all duration-300 flex flex-col overflow-hidden shadow-xl hover:-translate-y-1">
+              <div class="h-48 bg-gradient-to-br from-[#1d122e] to-[#2c1547] p-6 relative flex flex-col justify-between overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center justify-between relative z-10">
+                  <span class="px-2.5 py-1 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">DEV TOOLING</span>
+                  <span class="text-gray-400 font-mono text-xs">2026</span>
+                </div>
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold text-white font-mono group-hover:text-purple-400 transition-colors">OBSIDIAN SUITE</h3>
+                  <p class="text-xs text-purple-300 font-mono">Knowledge Graph &amp; Workflow Automations</p>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="proj.obsidian.desc">
+                  Conjunto de ferramentas e scripts em JavaScript / Node para processamento de grafos de conhecimento, automação de notas estruturadas e pipelines de escrita técnica de alta densidade.
+                </p>
+
+                <div class="space-y-3 pt-2 border-t border-[#1a2233]">
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Markdown AST</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Automation</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Productivity</span>
+                  </div>
+
+                  <div class="pt-3 flex items-center justify-between">
+                    <a href="https://github.com/matheuscarvalhofarias/Obsidian" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1.5 btn-sound">
+                      <span>Ver Repositório</span>
+                      <span>↗</span>
+                    </a>
+                    <span class="text-[11px] font-mono text-gray-500">Open Source</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 6: AuraPet -->
+            <div class="group relative rounded-2xl bg-[#0e121e] border border-[#20273a] hover:border-amber-500/60 transition-all duration-300 flex flex-col overflow-hidden shadow-xl hover:-translate-y-1">
+              <div class="h-48 bg-gradient-to-br from-[#291e0d] to-[#452e12] p-6 relative flex flex-col justify-between overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-amber-500/20 rounded-full blur-2xl"></div>
+                <div class="flex items-center justify-between relative z-10">
+                  <span class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">COMMERCE &amp; CARE</span>
+                  <span class="text-gray-400 font-mono text-xs">2026</span>
+                </div>
+                <div class="relative z-10">
+                  <h3 class="text-2xl font-bold text-white font-mono group-hover:text-amber-400 transition-colors">AURAPET</h3>
+                  <p class="text-xs text-amber-300 font-mono">Direct Conversion E-Commerce</p>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="proj.aurapet.desc">
+                  Interface de vendas e agendamentos diretos desenhada para maximizar a retenção de clientes em serviços de saúde e estética animal, com foco em checkout ágil sem fricção.
+                </p>
+
+                <div class="space-y-3 pt-2 border-t border-[#1a2233]">
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Conversion Rate</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Mobile-First</span>
+                    <span class="px-2 py-0.5 rounded bg-[#182033] text-gray-300 text-[11px] font-mono">Clean Architecture</span>
+                  </div>
+
+                  <div class="pt-3 flex items-center justify-between">
+                    <a href="https://github.com/matheuscarvalhofarias/aurapet-landing-page" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 btn-sound">
+                      <span>Ver Repositório</span>
+                      <span>↗</span>
+                    </a>
+                    <span class="text-[11px] font-mono text-gray-500">GitHub Verified</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- 03. ENGINEERING MANIFESTO: BRUTALLY HONEST & DIRECT -->
+      <!-- ========================================================================= -->
+      <section id="manifesto" class="py-24 border-t border-[#151a27] bg-[#07090e]/60 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="max-w-3xl mb-16">
+            <div class="text-xs font-mono text-cyan-400 tracking-widest uppercase mb-2">03 // PRINCÍPIOS FUNDAMENTAIS</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white font-mono tracking-tight" data-i18n="man.title">
+              O MANIFESTO DE ENGENHARIA
+            </h2>
+            <p class="mt-4 text-base text-gray-400 font-sans" data-i18n="man.subtitle">
+              Não sou fã de modismos ou frameworks com ciclo de vida de seis meses. Meu foco é entregar valor real, código manutenível e produtos que geram receita.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Principle 1 -->
+            <div class="p-8 rounded-2xl bg-[#0c101c] border border-[#1d2438] hover:border-cyan-500/40 transition-colors space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl font-mono font-black text-cyan-400">01</span>
+                <span class="text-[11px] font-mono text-gray-500 uppercase">PRINCIPIO_EXECUCAO</span>
+              </div>
+              <h3 class="text-xl font-bold text-white font-mono" data-i18n="man.p1.title">Código limpo não é vaidade, é velocidade</h3>
+              <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="man.p1.desc">
+                Engenharia de verdade não cria labirintos desnecessários para parecer inteligente. Código bom é aquele que qualquer desenvolvedor sênior lê em 10 segundos e entende exatamente o que está acontecendo sem consultar um mapa.
+              </p>
+            </div>
+
+            <!-- Principle 2 -->
+            <div class="p-8 rounded-2xl bg-[#0c101c] border border-[#1d2438] hover:border-indigo-500/40 transition-colors space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl font-mono font-black text-indigo-400">02</span>
+                <span class="text-[11px] font-mono text-gray-500 uppercase">PRINCIPIO_DESIGN</span>
+              </div>
+              <h3 class="text-xl font-bold text-white font-mono" data-i18n="man.p2.title">Se precisa de tutorial, a interface falhou</h3>
+              <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="man.p2.desc">
+                Interfaces devem ser tão intuitivas quanto abrir uma porta com maçaneta. O usuário não deve pensar no software: ele deve executar a tarefa dele e sentir que a máquina obedeceu instantaneamente.
+              </p>
+            </div>
+
+            <!-- Principle 3 -->
+            <div class="p-8 rounded-2xl bg-[#0c101c] border border-[#1d2438] hover:border-emerald-500/40 transition-colors space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl font-mono font-black text-emerald-400">03</span>
+                <span class="text-[11px] font-mono text-gray-500 uppercase">PRINCIPIO_PERFORMANCE</span>
+              </div>
+              <h3 class="text-xl font-bold text-white font-mono" data-i18n="man.p3.title">Performance é uma feature, não um capricho</h3>
+              <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="man.p3.desc">
+                Cada 100ms de atraso destrói a retenção. Não tolero sites pesados cheios de bibliotecas redundantes que servem apenas para somar 10MB no bundle inicial. O objetivo é carregamento instantâneo em qualquer rede.
+              </p>
+            </div>
+
+            <!-- Principle 4 -->
+            <div class="p-8 rounded-2xl bg-[#0c101c] border border-[#1d2438] hover:border-amber-500/40 transition-colors space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-2xl font-mono font-black text-amber-400">04</span>
+                <span class="text-[11px] font-mono text-gray-500 uppercase">PRINCIPIO_NEGOCIO</span>
+              </div>
+              <h3 class="text-xl font-bold text-white font-mono" data-i18n="man.p4.title">Menos reuniões, mais commits que funcionam</h3>
+              <p class="text-sm text-gray-300 font-sans leading-relaxed" data-i18n="man.p4.desc">
+                Debates teóricos infinitos não pagam servidores. O melhor feedback é um protótipo funcional rodando em produção na frente do usuário real. Teste rápido, meça dados reais e itere sem piedade.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Live Interactive Benchmark Toy -->
+          <div class="mt-12 p-6 rounded-2xl bg-[#0c101c] border border-[#1e2538] flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <h4 class="font-mono font-bold text-white text-sm" data-i18n="bench.title">TESTE DE PERFORMANCE DO SEU BROWSER</h4>
+              </div>
+              <p class="text-xs text-gray-400 font-sans" data-i18n="bench.desc">
+                Execute um benchmark em tempo real direto na thread do seu navegador para medir capacidade de computação e latência de rendering.
+              </p>
+            </div>
+            <div class="flex items-center gap-4 w-full md:w-auto">
+              <div id="benchmark-result" class="text-xs font-mono text-gray-300 hidden md:block">
+                Aguardando início...
+              </div>
+              <button id="run-benchmark-btn" class="w-full md:w-auto px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono text-xs font-bold transition-all btn-sound">
+                <span data-i18n="bench.btn">Rodar Benchmark ⚡</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- 04. INTERACTIVE TERMINAL: THE HACKER CONSOLE -->
+      <!-- ========================================================================= -->
+      <section id="terminal" class="py-24 border-t border-[#151a27] relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+            <div class="text-xs font-mono text-cyan-400 tracking-widest uppercase">04 // INTERFACE CLI NATIVA</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white font-mono tracking-tight" data-i18n="term.title">
+              O TERMINAL MF-CLI
+            </h2>
+            <p class="text-sm text-gray-400 font-mono" data-i18n="term.subtitle">
+              Prefere navegar via linha de comando? Digite comandos ou clique nos atalhos abaixo.
+            </p>
+
+            <!-- Quick command pills -->
+            <div class="flex flex-wrap justify-center gap-2 pt-2">
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="projects">projects</button>
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="skills">skills</button>
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="manifesto">manifesto</button>
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="contact">contact</button>
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="matrix">matrix</button>
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="hire">hire</button>
+              <button class="cmd-pill px-2.5 py-1 rounded bg-[#131726] border border-[#232b42] text-xs font-mono text-cyan-300 hover:border-cyan-500 transition-colors btn-sound" data-cmd="clear">clear</button>
+            </div>
+          </div>
+
+          <!-- Terminal Window Mockup -->
+          <div class="rounded-2xl bg-[#090c14] border border-[#222a3f] shadow-2xl overflow-hidden font-mono text-xs">
+            
+            <!-- Window Topbar -->
+            <div class="px-4 py-3 bg-[#111624] border-b border-[#1c2336] flex items-center justify-between select-none">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-red-500/80 cursor-pointer hover:opacity-80" id="term-close-btn"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500/80 cursor-pointer hover:opacity-80" id="term-min-btn"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500/80 cursor-pointer hover:opacity-80" id="term-max-btn"></span>
+              </div>
+              <span class="text-gray-400 font-bold text-[11px] tracking-wider">matheus@farias-kernel:~</span>
+              <span class="text-cyan-400 text-[10px]">BASH // UTF-8</span>
+            </div>
+
+            <!-- Terminal Output Buffer -->
+            <div id="terminal-screen" class="p-5 h-80 overflow-y-auto space-y-2 text-gray-300 leading-relaxed">
+              <div class="text-cyan-400 font-bold">
+                ┌──(matheus㉿farias-os)-[~] <br>
+                └─$ Inicializando console MF-KERNEL v2.6.4... [OK]
+              </div>
+              <p class="text-gray-400">
+                Bem-vindo ao sistema de terminal interativo. Digite <span class="text-yellow-400 font-bold">help</span> para ver a lista de comandos suportados.
+              </p>
+            </div>
+
+            <!-- Input Prompt Line -->
+            <form id="terminal-form" class="px-5 py-3 bg-[#0d101a] border-t border-[#1b2133] flex items-center gap-2">
+              <span class="text-emerald-400 font-bold">matheus@kernel:~$</span>
+              <input id="term-input" type="text" autocomplete="off" spellcheck="false" class="flex-grow bg-transparent text-white font-mono text-xs focus:outline-none placeholder-gray-600" placeholder="Digite um comando aqui...">
+              <button type="submit" class="text-xs font-mono text-gray-500 hover:text-cyan-400 px-2 py-0.5 rounded border border-gray-800 hover:border-gray-600 transition-colors">
+                ENTER ↵
+              </button>
+            </form>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- 05. DIRECT CONTACT HUB: ZERO FLUFF, 1-CLICK ACCESS -->
+      <!-- ========================================================================= -->
+      <section id="contato" class="py-24 border-t border-[#151a27] bg-[#07090e] relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="max-w-3xl mx-auto text-center space-y-4 mb-16">
+            <div class="text-xs font-mono text-cyan-400 tracking-widest uppercase">05 // CONECTAR SEM INTERMEDIÁRIOS</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white font-mono tracking-tight" data-i18n="contact.title">
+              VAMOS CONSTRUIR ALGO GRANDE
+            </h2>
+            <p class="text-base text-gray-400 font-sans" data-i18n="contact.subtitle">
+              Tem um projeto em mente, precisa de engenharia de ponta ou quer acelerar seu produto? Fale diretamente comigo.
+            </p>
+          </div>
+
+          <!-- Contact Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            
+            <!-- WhatsApp Direct Card -->
+            <a href="https://wa.me/5561999233249?text=Ol%C3%A1%20Matheus!%20Vi%20seu%20portfolio%20e%20gostaria%20de%20conversar%20sobre%20uma%20oportunidade." target="_blank" rel="noopener noreferrer" class="p-8 rounded-2xl bg-[#0c101c] border border-[#1e263c] hover:border-emerald-500/50 hover:bg-[#0f1424] transition-all group flex flex-col justify-between space-y-6 shadow-xl btn-sound">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                  <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.7c.974.551 1.764.847 2.791.848 3.185 0 5.769-2.587 5.77-5.766.001-3.182-2.585-5.769-5.77-5.769zm10.218 5.766c-.001 5.647-4.595 10.239-10.247 10.239-1.803 0-3.483-.473-4.945-1.294l-5.057 1.327 1.353-4.933c-.901-1.517-1.424-3.28-1.425-5.339.001-5.647 4.596-10.24 10.25-10.24 5.653 0 10.247 4.593 10.247 10.24z"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white font-mono">WhatsApp Direto</h3>
+                <p class="text-xs text-gray-400 font-sans">Canal mais rápido para início imediato e propostas.</p>
+              </div>
+              <div class="flex items-center justify-between text-xs font-mono font-bold text-emerald-400">
+                <span>(61) 99923-3249</span>
+                <span>Iniciar Chat ↗</span>
+              </div>
+            </a>
+
+            <!-- Copy Email Card -->
+            <div id="copy-email-card" class="p-8 rounded-2xl bg-[#0c101c] border border-[#1e263c] hover:border-cyan-500/50 hover:bg-[#0f1424] transition-all group flex flex-col justify-between space-y-6 shadow-xl cursor-pointer btn-sound">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white font-mono">E-mail Profissional</h3>
+                <p class="text-xs text-gray-400 font-sans">Clique para copiar o e-mail oficial para a área de transferência.</p>
+              </div>
+              <div class="flex items-center justify-between text-xs font-mono font-bold text-cyan-400">
+                <span class="truncate pr-2">matheusfarias.98@hotmail.com</span>
+                <span id="copy-feedback-label">Copiar 📋</span>
+              </div>
+            </div>
+
+            <!-- GitHub Profile Card -->
+            <a href="https://github.com/matheuscarvalhofarias" target="_blank" rel="noopener noreferrer" class="p-8 rounded-2xl bg-[#0c101c] border border-[#1e263c] hover:border-indigo-500/50 hover:bg-[#0f1424] transition-all group flex flex-col justify-between space-y-6 shadow-xl btn-sound">
+              <div class="space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                  <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white font-mono">GitHub Profile</h3>
+                <p class="text-xs text-gray-400 font-sans">Commits, código-fonte, arquitetura e contribuições em tempo real.</p>
+              </div>
+              <div class="flex items-center justify-between text-xs font-mono font-bold text-indigo-400">
+                <span>@matheuscarvalhofarias</span>
+                <span>Explorar ↗</span>
+              </div>
+            </a>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-[#141926] bg-[#06080d] text-xs font-mono text-gray-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <span class="text-gray-300 font-bold">MATHEUS CARVALHO FARIAS</span> &copy; 2026. Todos os direitos reservados.
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="text-gray-600">ENGENHARIA // DESIGN // IMPACTO</span>
+          <a href="#" class="text-cyan-400 hover:underline">Voltar ao Topo ↑</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
