@@ -1,0 +1,10 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio static site with clean URL redirects",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
+
