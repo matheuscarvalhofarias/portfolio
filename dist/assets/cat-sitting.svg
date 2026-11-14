@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <g stroke="#292720" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Sitting silhouette, pointed ears and round cheeks. -->
+    <path d="M89 94 C74 89 69 76 75 62 L72 31 Q73 27 78 31 L98 47 Q118 39 137 47 L157 30 Q162 27 162 33 L159 64 C166 80 157 94 142 99 C154 115 163 137 158 158 Q155 170 143 171 L89 171 Q75 169 77 154 C78 134 83 114 89 101"/>
+    <!-- Long curled tail. -->
+    <path d="M153 166 C180 173 202 160 203 139 C204 122 192 116 183 122 C175 127 179 138 187 135"/>
+    <!-- Front paws and haunch. -->
+    <path d="M101 119 L98 158 Q92 159 94 167 Q99 173 112 169 L118 133 L124 161 Q120 169 129 171 M142 132 Q156 144 142 158 M102 164 L102 169 M132 165 L133 170"/>
+    <!-- Ear folds. -->
+    <path d="M81 43 L84 59 M151 43 L147 58" stroke="#e7702b"/>
+    <!-- Happy eyes, tiny nose and smile. -->
+    <path d="M90 74 Q97 65 104 74 M127 74 Q134 65 141 74 M112 80 L120 80 L116 85 Z M116 85 L116 88 Q110 94 106 88 M116 88 Q122 94 126 88" stroke="#e7702b"/>
+    <!-- Whiskers. -->
+    <path d="M92 85 L68 80 M92 90 L67 94 M140 85 L164 80 M140 90 L165 94" stroke="#e7702b" stroke-width="2.5"/>
+    <!-- Small forehead stripes. -->
+    <path d="M108 51 L111 59 M118 49 L118 58 M128 51 L125 59" stroke="#e7702b" stroke-width="2.5"/>
+  </g>
+</svg>
