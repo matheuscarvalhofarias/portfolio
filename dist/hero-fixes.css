@@ -190,3 +190,19 @@
   .mobile-pudinho-label::after { width: 34px; height: 34px; left: 25px; top: 18px; }
 }
 .framer-83b9li-container::after { width: 44px; height: 43px; left: 9px; top: -1px; }
+
+/* Remove lock and blur from project cards */
+[aria-label="full case study locked"],
+[role="img"][aria-label*="locked"],
+.framer-v7odq9 {
+  display: none !important;
+}
+.framer-1cag6zr,
+.framer-t1qe19-container {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+video {
+  opacity: 1 !important;
+  visibility: visible !important;
+}

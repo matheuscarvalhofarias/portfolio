@@ -1,8 +1,12 @@
 /about /about.html 200
-/cvent-pass /cvent-pass.html 200
-/dishcovery /dishcovery.html 200
+/skyviewer /skyviewer.html 200
+/cozybed /cozybed.html 200
+/vertice-agro /vertice-agro.html 200
+/skynet /skynet.html 200
+/cvent-pass /skyviewer.html 200
+/stardog /cozybed.html 200
+/snoozefest /vertice-agro.html 200
+/dishcovery /skynet.html 200
 /doodle-wall /doodle-wall.html 200
 /letterboxd-redesign /letterboxd-redesign.html 200
 /playground /playground.html 200
-/snoozefest /snoozefest.html 200
-/stardog /stardog.html 200
